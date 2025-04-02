@@ -62,17 +62,23 @@ When using this framework in a new repository:
 
 1. Initialize the project structure:
    ```
-   python planning/new_project.py --source-branch main
+   claude-workflow new
    ```
 
-2. Ask Claude to help create your initial documentation:
+2. **Ask Claude to help create your initial documentation**:
    ```
-   cat planning/main/codebase.md  # Read the template with setup instructions
-   cat planning/main/domain.md    # Read the template with setup instructions
+   # Examine the template files with Claude
+   cat planning/feature/your-feature/codebase.md
+   cat planning/feature/your-feature/domain.md
    ```
 
-3. Work with Claude to analyze your codebase and create comprehensive documentation
-4. Both template files contain instructions that Claude can follow to help document your project
+3. Have Claude analyze your codebase by saying something like:
+   ```
+   "Please analyze our codebase and help me fill out the codebase.md and domain.md files based on the template instructions."
+   ```
+
+4. Both template files contain clear instructions that Claude can follow to help document your project
+5. This is the most important step - don't skip it!
 
 ## Project Structure
 
@@ -80,8 +86,7 @@ When using this framework in a new repository:
 your-project/
 ├── CLAUDE.md                  # Project-specific build and test commands
 ├── planning/                  # Planning directory
-│   ├── new_project.py         # Script to bootstrap new feature documentation
-│   ├── templates/             # Template files
+│   ├── templates/             # Template files (created by claude-workflow init)
 │   │   ├── api-docs.md        # API documentation template
 │   │   ├── architecture.md    # System architecture template
 │   │   ├── codebase.md        # Code style and patterns template
@@ -91,8 +96,16 @@ your-project/
 │   │   ├── tasks.md           # Development tasks template
 │   │   ├── testing.md         # Testing strategy template
 │   │   └── to-do.md           # Task checklist template
+│   ├── main/                  # Main branch documentation (created by claude-workflow new)
+│   │   ├── codebase.md        # Documentation of code organization and patterns
+│   │   └── domain.md          # Documentation of domain concepts and rules
 │   └── feature/               # Branch-specific folders will be created here
-│       └── my-feature/        # Example feature folder created by new_project.py
+│       └── my-feature/        # Example feature folder created by claude-workflow new
+│           ├── api-docs.md    # API documentation for this feature
+│           ├── architecture.md # Architecture changes for this feature
+│           ├── codebase.md    # Code patterns copied from main branch
+│           ├── domain.md      # Domain concepts copied from main branch
+│           └── ...            # Other documentation files
 ```
 
 ## Usage
@@ -104,21 +117,24 @@ your-project/
    git checkout -b feature/new-feature
    ```
 
-2. Run the project bootstrap script:
+2. Run the project bootstrap command:
    ```
-   # If installed via pip:
    claude-workflow new
-   
-   # Or if using the manual installation:
-   python planning/new_project.py
    ```
 
-3. The script will:
+3. The command will:
    - Create the proper directory structure based on your current branch
    - Copy the latest `domain.md` and `codebase.md` from the source branch
    - Create template files for all other standard documents
 
-4. Customize the template files for your specific project
+4. **MOST IMPORTANT STEP**: Have Claude help you customize the template files by asking it to analyze your codebase and fill in the templates:
+   ```
+   # First show Claude the templates with their instructions
+   cat planning/feature/new-feature/codebase.md
+   cat planning/feature/new-feature/domain.md
+   
+   # Then ask Claude to help you fill them in based on your codebase
+   ```
 
 ### Development Workflow
 

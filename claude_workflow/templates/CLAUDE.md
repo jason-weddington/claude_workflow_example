@@ -28,19 +28,19 @@
 To bootstrap a new project with the standard planning structure:
 
 1. Create and checkout a new feature branch (e.g., `git checkout -b feature/new-feature`)
-2. Run the project bootstrap script:
+2. Run the project bootstrap command:
    ```
-   python planning/new_project.py
+   claude-workflow new
    ```
-3. The script will:
+3. The command will:
    - Create the proper directory structure based on your current branch
    - Copy the latest `domain.md` and `codebase.md` from the source branch
    - Create template files for all other standard documents
-4. Customize the template files for your specific project
+4. **IMPORTANT:** Open and read the template files, particularly `codebase.md` and `domain.md`. These contain first-time setup instructions for AI assistants to analyze your codebase and document it properly.
 
 You can optionally specify a different source branch to copy from:
 ```
-python planning/new_project.py --source-branch feature/other-branch
+claude-workflow new --source-branch feature/other-branch
 ```
 
 ## Development Workflow
