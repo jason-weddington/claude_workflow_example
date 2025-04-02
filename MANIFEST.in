@@ -1,0 +1,4 @@
+include README.md
+include CLAUDE.md
+include LICENSE
+recursive-include claude_workflow/templates *
