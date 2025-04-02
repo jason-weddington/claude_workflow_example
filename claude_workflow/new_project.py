@@ -133,8 +133,8 @@ def main(source_branch="main"):
     Args:
         source_branch: Branch to copy domain.md and codebase.md from
     """
-    # Only parse arguments if called directly (not from cli.py)
-    if len(sys.argv) > 1:
+    # Only parse arguments if called directly as a script (not from cli.py)
+    if __name__ == "__main__" and len(sys.argv) > 1:
         parser = argparse.ArgumentParser(description="Bootstrap a new project planning structure")
         parser.add_argument("--source-branch", default="main", help="Branch to copy domain.md and codebase.md from")
         args = parser.parse_args()
