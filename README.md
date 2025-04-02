@@ -17,11 +17,11 @@ A task management framework designed to help Claude Code (or other agents) struc
 The simplest way to install the Claude Workflow Framework is via pip:
 
 ```bash
-# Install directly from GitHub (replace with your actual repository URL)
-pip install git+https://github.com/yourusername/claude_workflow_example.git
+# Install directly from GitHub
+pip install git+https://github.com/jason-weddington/claude_workflow_example.git
 
 # Or install locally in development mode
-git clone https://github.com/yourusername/claude_workflow_example.git
+git clone https://github.com/jason-weddington/claude_workflow_example.git
 cd claude_workflow_example
 pip install -e .
 ```
@@ -49,7 +49,7 @@ Alternatively, you can use the provided install script:
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/claude_workflow_example.git
+git clone https://github.com/jason-weddington/claude_workflow_example.git
 cd claude_workflow_example
 
 # Run the install script
