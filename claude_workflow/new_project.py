@@ -127,12 +127,18 @@ def create_template_files(target_dir, planning_dir):
             print(f"Warning: Template file {source_file} not found")
 
 
-def main():
-    """Main function."""
-    parser = argparse.ArgumentParser(description="Bootstrap a new project planning structure")
-    parser.add_argument("--source-branch", default="main", help="Branch to copy domain.md and codebase.md from")
-    args = parser.parse_args()
-    source_branch = args.source_branch
+def main(source_branch="main"):
+    """Main function.
+    
+    Args:
+        source_branch: Branch to copy domain.md and codebase.md from
+    """
+    # Only parse arguments if called directly (not from cli.py)
+    if len(sys.argv) > 1:
+        parser = argparse.ArgumentParser(description="Bootstrap a new project planning structure")
+        parser.add_argument("--source-branch", default="main", help="Branch to copy domain.md and codebase.md from")
+        args = parser.parse_args()
+        source_branch = args.source_branch
     
     # Get the current branch
     current_branch = get_current_branch()

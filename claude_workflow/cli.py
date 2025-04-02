@@ -68,7 +68,8 @@ def new_project_command(args):
     """Create a new project structure based on the current git branch."""
     # We'll reuse the existing new_project.py functionality
     from claude_workflow.new_project import main as new_project_main
-    return new_project_main()
+    # Pass the source_branch argument
+    return new_project_main(args.source_branch)
 
 
 def main():
