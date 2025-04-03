@@ -150,12 +150,12 @@ When beginning work on a new codebase:
    ```
 
 3. **Have Claude Analyze Your Codebase**:
-   ```bash
-   # Show Claude the templates
-   cat planning/main/codebase.md
-   cat planning/main/domain.md
-   
-   # Ask Claude to analyze and document your codebase
+   Ask Claude:
+   ```
+   Please review the planning/main/codebase.md and planning/main/domain.md templates, 
+   then analyze our codebase to fill them out properly. Follow the first-time setup 
+   instructions in the templates to document our code organization, patterns, 
+   domain concepts, and business rules.
    ```
 
 4. **Create Your First Feature Branch**:
