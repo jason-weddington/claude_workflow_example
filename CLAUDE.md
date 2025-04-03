@@ -10,19 +10,35 @@
 # pytest            # Run tests
 ```
 
-## Project Notes
-- Store notes in the `planning` folder in a subfolder matching the git branch name
-- Example: for branch `feature/new-feature`, notes should go in `/planning/feature/new-feature/`
-- Standard files in each notes folder:
-  - `codebase.md`: Code style, test locations, domain structure, and developer onboarding info
-  - `feature.md`: Description of the feature being built, including business goals
-  - `tasks.md`: Detailed development tasks with clear acceptance criteria for new developers
-  - `to-do.md`: Simple checklist that corresponds to the detailed tasks in tasks.md
-  - `setup.md`: Environment setup instructions, required dependencies, and troubleshooting tips
-  - `domain.md`: Explanation of key domain concepts, terminology, and business rules
-  - `architecture.md`: High-level system design, component relationships, and data flow diagrams
-  - `api-docs.md`: Documentation of any APIs this code interacts with, including examples
-  - `testing.md`: Testing strategy, test data setup, and how to validate changes
+## Project Structure
+
+```
+your-project/                  # Your project repository
+├── CLAUDE.md                  # Project-specific build and test commands (created by init)
+├── planning/                  # Planning directory (created by init)
+│   ├── templates/             # Template files (created by init)
+│   │   ├── api-docs.md        # API documentation template
+│   │   ├── architecture.md    # System architecture template
+│   │   ├── codebase.md        # Code style and patterns template
+│   │   ├── domain.md          # Domain concepts template
+│   │   └── ...                # Other templates
+│   ├── main/                  # Main branch documentation (created by new on main branch)
+│   │   ├── codebase.md        # Documentation of code organization and patterns
+│   │   └── domain.md          # Documentation of domain concepts and rules
+│   └── feature/               # Feature branch folders (created by new on feature branches)
+│       └── your-feature/      # Documentation for specific features
+│           ├── api-docs.md    # API documentation for this feature
+│           ├── architecture.md # Architecture changes for this feature
+│           ├── codebase.md    # Code patterns (copied from main branch)
+│           ├── domain.md      # Domain concepts (copied from main branch)
+│           ├── feature.md     # Feature description
+│           ├── tasks.md       # Detailed development tasks
+│           ├── to-do.md       # Task checklist
+│           ├── setup.md       # Environment setup instructions
+│           └── testing.md     # Testing strategy for this feature
+```
+
+Notes for each branch are stored in the `planning` folder in a subfolder matching the git branch name. For example, documentation for branch `feature/new-feature` goes in `/planning/feature/new-feature/`.
 
 ## Creating a New Project
 To bootstrap a new project with the standard planning structure:
