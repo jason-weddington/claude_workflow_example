@@ -57,7 +57,8 @@ def create_command(args):
     print("Next steps:")
     print(f"1. Edit {target_dir}/CLAUDE.md with your specific project details")
     print("2. Create a feature branch: git checkout -b feature/your-feature")
-    print("3. Run the project script: python planning/new_project.py")
+    print("3. Run claude-workflow new to create documentation for the new feature")
+    print("4. Tell Claude to read the planning documents to understand your project")
     print("")
     print("For more information, see the documentation.")
     
