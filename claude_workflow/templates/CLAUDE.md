@@ -15,33 +15,33 @@
 ```
 your-project/                  # Your project repository
 ├── CLAUDE.md                  # Project-specific build and test commands (created by init)
+├── docs/                      # General project documentation (created by init)
+│   ├── api-docs.md            # API documentation
+│   ├── architecture.md        # System architecture
+│   ├── codebase.md            # Code style and patterns
+│   ├── domain.md              # Domain concepts
+│   ├── setup.md               # Environment setup instructions
+│   └── testing.md             # Testing strategy
 ├── planning/                  # Planning directory (created by init)
-│   ├── templates/             # Template files (created by init)
-│   │   ├── api-docs.md        # API documentation template
-│   │   ├── architecture.md    # System architecture template
-│   │   ├── codebase.md        # Code style and patterns template
-│   │   ├── domain.md          # Domain concepts template
-│   │   └── ...                # Other templates
-│   ├── main/                  # Main branch documentation (created by new on main branch)
-│   │   ├── codebase.md        # Documentation of code organization and patterns
-│   │   └── domain.md          # Documentation of domain concepts and rules
-│   └── feature/               # Feature branch folders (created by new on feature branches)
-│       └── your-feature/      # Documentation for specific features
-│           ├── api-docs.md    # API documentation for this feature
-│           ├── architecture.md # Architecture changes for this feature
-│           ├── codebase.md    # Code patterns (copied from main branch)
-│           ├── domain.md      # Domain concepts (copied from main branch)
-│           ├── feature.md     # Feature description
-│           ├── tasks.md       # Detailed development tasks
-│           ├── to-do.md       # Task checklist
-│           ├── setup.md       # Environment setup instructions
-│           └── testing.md     # Testing strategy for this feature
+│   ├── templates/             # Feature-specific templates (created by init)
+│   │   ├── feature.md         # Feature description template
+│   │   ├── tasks.md           # Detailed development tasks template
+│   │   └── to-do.md           # Task checklist template
+│   └── [branch-name]/         # Mirrors your git branch structure (created by new)
+│       ├── feature.md         # Feature description
+│       ├── tasks.md           # Detailed development tasks
+│       └── to-do.md           # Task checklist
+│
+│   Examples:
+│   └── feature/new-auth/      # For git branch "feature/new-auth"
+│   └── fix/bug-123/           # For git branch "fix/bug-123"
+│   └── refactor/db-layer/     # For git branch "refactor/db-layer"
 ```
 
-Notes for each branch are stored in the `planning` folder in a subfolder matching the git branch name. For example, documentation for branch `feature/new-feature` goes in `/planning/feature/new-feature/`.
+Feature-specific notes are stored in the `planning` folder in a subfolder that exactly matches your git branch name. The directory structure mirrors your branch names - if your branch is called `feature/new-feature`, the docs go in `planning/feature/new-feature/`. The word "feature" is not a special directory, it's just part of common branch naming conventions.
 
-## Creating a New Project
-To bootstrap a new project with the standard planning structure:
+## Creating Documentation for a New Feature
+When starting work on a new feature, use this command to create the planning documentation structure for that feature branch:
 
 1. Create and checkout a new feature branch (e.g., `git checkout -b feature/new-feature`)
 2. Run the project bootstrap command:
@@ -50,27 +50,24 @@ To bootstrap a new project with the standard planning structure:
    ```
 3. The command will:
    - Create the proper directory structure based on your current branch
-   - Copy the latest `domain.md` and `codebase.md` from the source branch
-   - Create template files for all other standard documents
-4. **IMPORTANT:** Open and read the template files, particularly `codebase.md` and `domain.md`. These contain first-time setup instructions for AI assistants to analyze your codebase and document it properly.
+   - Create template files for feature-specific documents
+4. **IMPORTANT:** Open and read the template files, particularly those in the docs/ directory. The `codebase.md` and `domain.md` in docs/ contain first-time setup instructions for AI assistants to analyze your codebase and document it properly.
 
-You can optionally specify a different source branch to copy from:
-```
-claude-workflow new --source-branch feature/other-branch
-```
+## Planning Workflow
+- Discuss the current feature with the user
+- Update feature.md documentation in planning/<branch-name>/feature.md
+- Collaborate with the user to define detailed development tasks with clear acceptance criteria in planning/<branch-name>/tasks.md
+- Add simple checkbox tasks in planning/<branch-name>/to-do.md that correspond to each task
 
 ## Development Workflow
 - Check to-do.md for the next task to implement
 - Read the detailed requirements in tasks.md for that specific task
 - Implement only that single task completely, following TDD practices
 - Ensure all tests pass before considering the task complete
-- Update codebase.md with any new structures, patterns, or concepts introduced
+- Update docs/codebase.md with any new structures, patterns, or concepts introduced
 - Mark the task as completed in to-do.md
 - Commit changes to git with a meaningful commit message
 - Stop and wait for feedback before moving to the next task
 
 ## Code Style Guidelines
 - Add your project's code style guidelines here
-
-## Project Structure
-- Add your project's structure information here

@@ -1,0 +1,197 @@
+{
+  "main": {
+    "id": "b147fd13a925f20f",
+    "type": "split",
+    "children": [
+      {
+        "id": "9e955fbb6452ab5c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "da52fdec5f8671ac",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "claude_workflow/templates/CLAUDE.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CLAUDE"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "fe69582c561b7cfc",
+    "type": "split",
+    "children": [
+      {
+        "id": "c1836f09c91247f2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c3bf01a9cd46f07f",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "1c8e3522e3930da9",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "c2ced1cc52c5ccf0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "1286febaa9c2849d",
+    "type": "split",
+    "children": [
+      {
+        "id": "163da0a9e55d2991",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "db545a49e2a2f440",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "claude_workflow/templates/CLAUDE.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for CLAUDE"
+            }
+          },
+          {
+            "id": "491c3793ef6be1ca",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "claude_workflow/templates/CLAUDE.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from CLAUDE"
+            }
+          },
+          {
+            "id": "b40b09acc784cf87",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "e293d842d183b551",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "claude_workflow/templates/CLAUDE.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of CLAUDE"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "da52fdec5f8671ac",
+  "lastOpenFiles": [
+    "build/bdist.macosx-15.3-arm64",
+    "CLAUDE.md",
+    "claude_workflow/templates/tasks.md",
+    "build/lib/claude_workflow/templates/MIGRATION_INSTRUCTIONS.md",
+    "claude_workflow/templates/MIGRATION_INSTRUCTIONS.md",
+    "claude_workflow/templates/CLAUDE.md",
+    "claude_workflow/templates/architecture.md",
+    "claude_workflow/templates/api-docs.md",
+    "README.md",
+    "test_workflow/CLAUDE.md",
+    "test_workflow/planning/templates/to-do.md",
+    "test_workflow/planning/templates/testing.md",
+    "test_workflow/planning/templates/tasks.md",
+    "test_workflow/planning/templates/setup.md",
+    "test_workflow/planning/templates/feature.md",
+    "test_workflow/planning/templates/domain.md",
+    "test_workflow/planning/templates/codebase.md",
+    "test_workflow/planning/templates/architecture.md",
+    "test_workflow/planning/templates/api-docs.md",
+    "test_workflow/planning/templates",
+    "test_workflow/planning/new_project.py",
+    "test_workflow/planning",
+    "test_workflow"
+  ]
+}

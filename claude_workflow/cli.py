@@ -33,24 +33,41 @@ def create_command(args):
     planning_dir = target_dir / "planning" / "templates"
     planning_dir.mkdir(parents=True, exist_ok=True)
     
-    # Copy CLAUDE.md to target directory
+    # Create docs directory
+    docs_dir = target_dir / "docs"
+    docs_dir.mkdir(exist_ok=True)
+    
+    # Copy CLAUDE.md to target directory, removing the H1 header
     claude_md_src = pkg_resources.files('claude_workflow') / 'templates' / 'CLAUDE.md'
-    shutil.copy(claude_md_src, target_dir / "CLAUDE.md")
+    with claude_md_src.open('r') as src_file:
+        lines = src_file.readlines()
+        # Skip the first line (H1 header) and any blank lines that immediately follow
+        start_index = 1
+        while start_index < len(lines) and lines[start_index].strip() == '':
+            start_index += 1
+        
+    with open(target_dir / "CLAUDE.md", 'w') as dst_file:
+        dst_file.writelines(lines[start_index:])
     
     # Copy new_project.py
     project_script_src = Path(__file__).parent / "new_project.py"
     shutil.copy(project_script_src, target_dir / "planning" / "new_project.py")
     os.chmod(target_dir / "planning" / "new_project.py", 0o755)  # Make executable
     
-    # Copy template files
-    template_files = [
-        'api-docs.md', 'architecture.md', 'codebase.md', 'domain.md',
-        'feature.md', 'setup.md', 'tasks.md', 'testing.md', 'to-do.md'
-    ]
+    # Define which template files go where
+    feature_templates = ['feature.md', 'tasks.md', 'to-do.md']
+    general_templates = ['api-docs.md', 'architecture.md', 'codebase.md', 'domain.md', 
+                        'setup.md', 'testing.md']
     
-    for file in template_files:
+    # Copy feature-specific templates to planning/templates
+    for file in feature_templates:
         src_file = pkg_resources.files('claude_workflow') / 'templates' / file
-        shutil.copy(src_file, target_dir / "planning" / "templates" / file)
+        shutil.copy(src_file, planning_dir / file)
+    
+    # Copy general templates to docs/
+    for file in general_templates:
+        src_file = pkg_resources.files('claude_workflow') / 'templates' / file
+        shutil.copy(src_file, docs_dir / file)
     
     print(f"Claude Workflow initialized in {target_dir}")
     print("")
@@ -69,8 +86,67 @@ def new_project_command(args):
     """Create a new project structure based on the current git branch."""
     # We'll reuse the existing new_project.py functionality
     from claude_workflow.new_project import main as new_project_main
-    # Pass the source_branch argument
-    return new_project_main(args.source_branch)
+    return new_project_main()
+
+
+def update_command(args):
+    """Update project to the latest documentation structure."""
+    # Ensure we're in a project directory with CLAUDE.md
+    if not Path("CLAUDE.md").exists():
+        print("Error: No CLAUDE.md found. Please run this command from the project root.")
+        return 1
+    
+    # Create necessary directories
+    Path("docs").mkdir(exist_ok=True)
+    Path("planning/templates").mkdir(parents=True, exist_ok=True)
+    
+    # Copy latest templates to the correct locations
+    template_mappings = {
+        # Feature-specific templates go to planning/templates
+        'feature.md': 'planning/templates/feature.md',
+        'tasks.md': 'planning/templates/tasks.md', 
+        'to-do.md': 'planning/templates/to-do.md',
+        # General templates go to docs
+        'api-docs.md': 'docs/api-docs.md',
+        'architecture.md': 'docs/architecture.md',
+        'codebase.md': 'docs/codebase.md',
+        'domain.md': 'docs/domain.md',
+        'setup.md': 'docs/setup.md',
+        'testing.md': 'docs/testing.md'
+    }
+    
+    for template_file, dest_path in template_mappings.items():
+        dest_file = Path(dest_path)
+        if not dest_file.exists():
+            src_file = pkg_resources.files('claude_workflow') / 'templates' / template_file
+            shutil.copy(src_file, dest_file)
+    
+    # Update new_project.py script to latest version
+    project_script_src = Path(__file__).parent / "new_project.py"
+    project_script_dest = Path("planning/new_project.py")
+    shutil.copy(project_script_src, project_script_dest)
+    os.chmod(project_script_dest, 0o755)  # Make executable
+    
+    # Create migration instructions
+    migration_src = pkg_resources.files('claude_workflow') / 'templates' / 'MIGRATION_INSTRUCTIONS.md'
+    shutil.copy(migration_src, Path("MIGRATION_INSTRUCTIONS.md"))
+    
+    # Read and display the migration instructions
+    with open("MIGRATION_INSTRUCTIONS.md", 'r') as f:
+        instructions = f.read()
+    
+    print("="*70)
+    print("CLAUDE WORKFLOW UPDATE - MIGRATION REQUIRED")
+    print("="*70)
+    print()
+    print(instructions)
+    print()
+    print("="*70)
+    print("Migration instructions have been saved to: MIGRATION_INSTRUCTIONS.md")
+    print("Please review and follow the instructions above to complete the migration.")
+    print("="*70)
+    
+    return 0
 
 
 def main():
@@ -87,9 +163,11 @@ def main():
     
     # New project command
     new_parser = subparsers.add_parser("new", help="Create a new project structure")
-    new_parser.add_argument("--source-branch", default="main", 
-                         help="Branch to copy domain.md and codebase.md from")
     new_parser.set_defaults(func=new_project_command)
+    
+    # Update command
+    update_parser = subparsers.add_parser("update", help="Update project to the latest documentation structure")
+    update_parser.set_defaults(func=update_command)
     
     # Parse args
     args = parser.parse_args()
