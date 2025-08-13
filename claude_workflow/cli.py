@@ -16,6 +16,7 @@ from claude_workflow import utils
 def create_command(args):
     """Initialize a new Claude Workflow in the specified directory."""
     target_dir = Path(args.path).resolve()
+    use_amazonq = getattr(args, 'amazonq', False)
     
     # Verify the target directory
     if not target_dir.exists():
@@ -37,16 +38,24 @@ def create_command(args):
     docs_dir = target_dir / "docs"
     docs_dir.mkdir(exist_ok=True)
     
-    # Copy CLAUDE.md to target directory, removing the H1 header
-    claude_md_src = pkg_resources.files('claude_workflow') / 'templates' / 'CLAUDE.md'
-    with claude_md_src.open('r') as src_file:
+    # Determine which template and filename to use
+    if use_amazonq:
+        template_name = 'AmazonQ.md'
+        output_filename = 'AmazonQ.md'
+    else:
+        template_name = 'CLAUDE.md'
+        output_filename = 'CLAUDE.md'
+    
+    # Copy the appropriate .md file to target directory, removing the H1 header
+    md_src = pkg_resources.files('claude_workflow') / 'templates' / template_name
+    with md_src.open('r') as src_file:
         lines = src_file.readlines()
         # Skip the first line (H1 header) and any blank lines that immediately follow
         start_index = 1
         while start_index < len(lines) and lines[start_index].strip() == '':
             start_index += 1
         
-    with open(target_dir / "CLAUDE.md", 'w') as dst_file:
+    with open(target_dir / output_filename, 'w') as dst_file:
         dst_file.writelines(lines[start_index:])
     
     # Copy new_project.py
@@ -72,10 +81,16 @@ def create_command(args):
     print(f"Claude Workflow initialized in {target_dir}")
     print("")
     print("Next steps:")
-    print(f"1. Edit {target_dir}/CLAUDE.md with your specific project details")
-    print("2. Create a feature branch: git checkout -b feature/your-feature")
-    print("3. Run claude-workflow new to create documentation for the new feature")
-    print("4. Tell Claude to read the planning documents to understand your project")
+    if use_amazonq:
+        print(f"1. Edit {target_dir}/AmazonQ.md with your specific project details")
+        print("2. Create a feature branch: git checkout -b feature/your-feature")
+        print("3. Run claude-workflow new to create documentation for the new feature")
+        print("4. Tell Amazon Q to read the planning documents to understand your project")
+    else:
+        print(f"1. Edit {target_dir}/CLAUDE.md with your specific project details")
+        print("2. Create a feature branch: git checkout -b feature/your-feature")
+        print("3. Run claude-workflow new to create documentation for the new feature")
+        print("4. Tell Claude to read the planning documents to understand your project")
     print("")
     print("For more information, see the documentation.")
     
@@ -91,9 +106,9 @@ def new_project_command(args):
 
 def update_command(args):
     """Update project to the latest documentation structure."""
-    # Ensure we're in a project directory with CLAUDE.md
-    if not Path("CLAUDE.md").exists():
-        print("Error: No CLAUDE.md found. Please run this command from the project root.")
+    # Ensure we're in a project directory with CLAUDE.md or AmazonQ.md
+    if not Path("CLAUDE.md").exists() and not Path("AmazonQ.md").exists():
+        print("Error: No CLAUDE.md or AmazonQ.md found. Please run this command from the project root.")
         return 1
     
     # Create necessary directories
@@ -159,6 +174,7 @@ def main():
     # Init command
     init_parser = subparsers.add_parser("init", help="Initialize a new Claude Workflow in a directory")
     init_parser.add_argument("path", help="Path to the target directory")
+    init_parser.add_argument("--amazonq", action="store_true", help="Initialize for Amazon Q instead of Claude")
     init_parser.set_defaults(func=create_command)
     
     # New project command
