@@ -18,4 +18,7 @@ env/
 .idea/
 
 # macOS system files
-.DS_Store.obsidian/
+.DS_Store
+
+# Obsidian
+.obsidian/
