@@ -80,26 +80,27 @@ After completing the setup steps, your project will have this structure:
 ```
 your-project/                  # Your project repository
 ├── CLAUDE.md                  # Project-specific build and test commands (created by init)
+├── docs/                      # General project documentation (created by init)
+│   ├── api-docs.md            # API documentation
+│   ├── architecture.md        # System architecture
+│   ├── codebase.md            # Code style and patterns
+│   ├── domain.md              # Domain concepts
+│   ├── setup.md               # Environment setup instructions
+│   └── testing.md             # Testing strategy
 ├── planning/                  # Planning directory (created by init)
-│   ├── templates/             # Template files (created by init)
-│   │   ├── api-docs.md        # API documentation template
-│   │   ├── architecture.md    # System architecture template
-│   │   ├── codebase.md        # Code style and patterns template
-│   │   ├── domain.md          # Domain concepts template
-│   │   └── ...                # Other templates
-│   ├── main/                  # Main branch documentation (created by new on main branch)
-│   │   ├── codebase.md        # Documentation of code organization and patterns
-│   │   └── domain.md          # Documentation of domain concepts and rules
-│   └── feature/               # Feature branch folders (created by new on feature branches)
-│       └── your-feature/      # Documentation for specific features
-│           ├── api-docs.md    # API documentation for this feature
-│           ├── architecture.md # Architecture changes for this feature
-│           ├── codebase.md    # Code patterns (copied from main branch)
-│           ├── domain.md      # Domain concepts (copied from main branch)
-│           ├── feature.md     # Feature description
-│           ├── tasks.md       # Detailed development tasks
-│           ├── to-do.md       # Task checklist
-│           └── ...            # Other documentation
+│   ├── templates/             # Feature-specific templates (created by init)
+│   │   ├── feature.md         # Feature description template
+│   │   ├── tasks.md           # Detailed development tasks template
+│   │   └── to-do.md           # Task checklist template
+│   └── [branch-name]/         # Mirrors your git branch structure (created by new)
+│       ├── feature.md         # Feature description
+│       ├── tasks.md           # Detailed development tasks
+│       └── to-do.md           # Task checklist
+│
+│   Examples:
+│   └── feature/new-auth/      # For git branch "feature/new-auth"
+│   └── fix/bug-123/           # For git branch "fix/bug-123"
+│   └── refactor/db-layer/     # For git branch "refactor/db-layer"
 ```
 
 ## Commands Reference
