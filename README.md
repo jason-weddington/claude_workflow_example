@@ -63,19 +63,12 @@ This creates branch-specific documentation in `planning/feature/your-feature/` b
 
 ### Step 4: Have Claude Fill In The Templates (Most Important Step!)
 
-Show Claude the templates with their embedded instructions:
-
-```bash
-# Show Claude the template files
-cat planning/feature/your-feature/codebase.md
-cat planning/feature/your-feature/domain.md
-```
-
 Then ask Claude to analyze your codebase and document it:
 
 ```
 "Please analyze our codebase and help me fill out the codebase.md and domain.md files 
-based on the template instructions inside them."
+based on the template instructions inside them. Get started based on what you find in the code,
+but then ask me questions to clarify anything that wasn't clear from reading the code."
 ```
 
 The templates contain detailed instructions for Claude to follow. This step is crucial - don't skip it!
@@ -120,14 +113,12 @@ The framework provides two main commands:
 - Sets up the planning directory with template files
 - Only needs to be run once per repository
 
-### `claude-workflow new [--source-branch branch-name]`
+### `claude-workflow new`
 
 **Purpose**: Creates documentation structure for the current branch
-- Automatically detects your current git branch
 - Creates the appropriate directory structure (e.g., planning/feature/your-feature/)
-- Copies domain.md and codebase.md from the source branch (default: main)
-- Creates template files for other documentation
-- Run this command whenever you create a new branch
+- Creates template files for feature documentation
+- Run this command whenever you create a new feature branch
 
 ## Workflow Guide
 
