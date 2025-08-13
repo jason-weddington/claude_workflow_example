@@ -1,6 +1,6 @@
 # Claude Workflow Framework
 
-A task management framework designed to help Claude Code (or other agents) structure projects, manage tasks, and document software development processes using a standardized folder structure and markdown templates.
+A task management framework designed to help AI coding assistants (Claude, Amazon Q, or other agents) structure projects, manage tasks, and document software development processes using a standardized folder structure and markdown templates.
 
 ## Features
 
@@ -8,7 +8,8 @@ A task management framework designed to help Claude Code (or other agents) struc
 - Automated project structure creation
 - Standardized documentation templates
 - Clear development workflow guidance
-- Integration with Claude's task tracking capabilities
+- Support for multiple AI assistants (Claude and Amazon Q)
+- Integration with AI assistant task tracking capabilities
 
 ## Installation & Setup
 
@@ -41,13 +42,17 @@ Navigate to your project repository and initialize the framework:
 ```bash
 cd /path/to/your/project
 
-# Initialize the project with basic structure (only run once per repository)
+# Initialize for Claude (default)
 claude-workflow init .
+
+# OR initialize for Amazon Q
+claude-workflow init . --amazonq
 ```
 
 This creates:
-- `CLAUDE.md` file in your project root
-- `planning/templates/` directory with documentation templates
+- `CLAUDE.md` (or `AmazonQ.md` with --amazonq flag) file in your project root
+- `docs/` directory with general project documentation
+- `planning/templates/` directory with feature-specific templates
 
 ### Step 3: Create Documentation for Your Branch
 
@@ -61,9 +66,9 @@ claude-workflow new
 
 This creates branch-specific documentation in `planning/feature/your-feature/` based on your current branch name.
 
-### Step 4: Have Claude Fill In The Templates (Most Important Step!)
+### Step 4: Have Your AI Assistant Fill In The Templates (Most Important Step!)
 
-Then ask Claude to analyze your codebase and document it:
+Then ask your AI assistant (Claude or Amazon Q) to analyze your codebase and document it:
 
 ```
 "Please analyze our codebase and help me fill out the codebase.md and domain.md files 
@@ -71,7 +76,7 @@ based on the template instructions inside them. Get started based on what you fi
 but then ask me questions to clarify anything that wasn't clear from reading the code."
 ```
 
-The templates contain detailed instructions for Claude to follow. This step is crucial - don't skip it!
+The templates contain detailed instructions for your AI assistant to follow. This step is crucial - don't skip it!
 
 ## Project Structure
 
@@ -79,7 +84,7 @@ After completing the setup steps, your project will have this structure:
 
 ```
 your-project/                  # Your project repository
-├── CLAUDE.md                  # Project-specific build and test commands (created by init)
+├── CLAUDE.md or AmazonQ.md    # Project-specific build and test commands (created by init)
 ├── docs/                      # General project documentation (created by init)
 │   ├── api-docs.md            # API documentation
 │   ├── architecture.md        # System architecture
@@ -107,12 +112,16 @@ your-project/                  # Your project repository
 
 The framework provides two main commands:
 
-### `claude-workflow init [directory]`
+### `claude-workflow init [directory] [--amazonq]`
 
 **Purpose**: One-time initialization of a project with the Claude Workflow structure
-- Creates the CLAUDE.md file in your project root
-- Sets up the planning directory with template files
+- Creates the CLAUDE.md file (or AmazonQ.md with --amazonq flag) in your project root
+- Sets up the docs/ directory with general project documentation
+- Sets up the planning/templates/ directory with feature-specific templates
 - Only needs to be run once per repository
+
+**Options**:
+- `--amazonq`: Initialize for Amazon Q instead of Claude (creates AmazonQ.md instead of CLAUDE.md)
 
 ### `claude-workflow new`
 
