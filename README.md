@@ -68,7 +68,9 @@ This creates branch-specific documentation in `planning/feature/your-feature/` b
 
 ### Step 4: Have Your AI Assistant Fill In The Templates (Most Important Step!)
 
-Then ask your AI assistant (Claude or Amazon Q) to analyze your codebase and document it:
+It's critical to invest time upfront creating the initial documentation. This will provide the requisite context for AI-first software development.
+
+Ask your AI assistant (Claude or Amazon Q) to analyze your codebase and document it:
 
 ```
 "Please analyze our codebase and help me fill out the codebase.md and domain.md files 
@@ -76,8 +78,9 @@ based on the template instructions inside them. Get started based on what you fi
 but then ask me questions to clarify anything that wasn't clear from reading the code."
 ```
 
-The templates contain detailed instructions for your AI assistant to follow. This step is crucial - don't skip it!
+Repeat this for api-docs.md, architecture.md, setup.md, and testing.md if these files are relevant to your project. Try variations of the above prompt like "help me create documentation for new team members..." and remember to ask the model to ask you questions about what it sees in the code.
 
+The templates contain detailed instructions for your AI assistant to follow. This step is crucial - don't skip it!
 ## Project Structure
 
 After completing the setup steps, your project will have this structure:
