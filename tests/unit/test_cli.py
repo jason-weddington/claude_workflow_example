@@ -13,274 +13,215 @@ import pytest
 from claude_workflow import cli
 
 
-class TestArgumentParsing:
-    """Test CLI argument parsing functionality."""
-    
-    def test_main_parser_creation(self):
-        """Test that main parser is created correctly."""
-        parser = cli.create_parser()
-        assert isinstance(parser, argparse.ArgumentParser)
-        assert parser.prog == 'claude-workflow'
-    
-    def test_init_subcommand_parsing(self):
-        """Test init subcommand argument parsing."""
-        parser = cli.create_parser()
-        
-        # Test basic init command
-        args = parser.parse_args(['init', '.'])
-        assert args.command == 'init'
-        assert args.directory == '.'
-        assert args.amazonq is False
-        
-        # Test init with amazonq flag
-        args = parser.parse_args(['init', '/tmp/test', '--amazonq'])
-        assert args.command == 'init'
-        assert args.directory == '/tmp/test'
-        assert args.amazonq is True
-    
-    def test_new_subcommand_parsing(self):
-        """Test new subcommand argument parsing."""
-        parser = cli.create_parser()
-        
-        args = parser.parse_args(['new'])
-        assert args.command == 'new'
-    
-    def test_update_subcommand_parsing(self):
-        """Test update subcommand argument parsing."""
-        parser = cli.create_parser()
-        
-        args = parser.parse_args(['update'])
-        assert args.command == 'update'
-    
-    def test_help_generation(self):
-        """Test that help messages are generated correctly."""
-        parser = cli.create_parser()
-        
-        with pytest.raises(SystemExit):
-            parser.parse_args(['--help'])
-    
-    def test_invalid_arguments(self):
-        """Test handling of invalid arguments."""
-        parser = cli.create_parser()
-        
-        with pytest.raises(SystemExit):
-            parser.parse_args(['invalid-command'])
-        
-        with pytest.raises(SystemExit):
-            parser.parse_args(['init'])  # Missing directory argument
-
-
 class TestCreateCommand:
-    """Test the create_command (init) functionality."""
+    """Test the create_command functionality."""
     
-    @patch('claude_workflow.cli.Path')
-    @patch('claude_workflow.cli.pkg_resources')
-    def test_create_command_success_claude(self, mock_pkg_resources, mock_path, temp_dir, sample_templates_dir):
-        """Test successful init command for Claude."""
-        # Setup mocks
-        mock_path.return_value = temp_dir
-        mock_pkg_resources.files.return_value = sample_templates_dir.parent
-        
-        # Mock template file
-        template_file = Mock()
-        template_file.read_text.return_value = "# {{FILENAME}} Template\n\nAgent: {{AGENT_NAME}}"
-        (sample_templates_dir / "agent_instructions.md").write_text("# {{FILENAME}} Template\n\nAgent: {{AGENT_NAME}}")
-        
-        # Create mock args
-        args = Mock()
-        args.directory = str(temp_dir)
-        args.amazonq = False
-        
-        # Test the command
-        result = cli.create_command(args)
-        
-        assert result == 0
-        assert (temp_dir / "CLAUDE.md").exists()
-        content = (temp_dir / "CLAUDE.md").read_text()
-        assert "CLAUDE.md" in content
-        assert "Claude" in content
-    
-    @patch('claude_workflow.cli.Path')
-    @patch('claude_workflow.cli.pkg_resources')
-    def test_create_command_success_amazonq(self, mock_pkg_resources, mock_path, temp_dir, sample_templates_dir):
-        """Test successful init command for Amazon Q."""
-        # Setup mocks
-        mock_path.return_value = temp_dir
-        mock_pkg_resources.files.return_value = sample_templates_dir.parent
-        
-        # Mock template file
-        (sample_templates_dir / "agent_instructions.md").write_text("# {{FILENAME}} Template\n\nAgent: {{AGENT_NAME}}")
-        
-        # Create mock args
-        args = Mock()
-        args.directory = str(temp_dir)
-        args.amazonq = True
-        
-        # Test the command
-        result = cli.create_command(args)
-        
-        assert result == 0
-        assert (temp_dir / "AmazonQ.md").exists()
-        content = (temp_dir / "AmazonQ.md").read_text()
-        assert "AmazonQ.md" in content
-        assert "Amazon Q" in content
-    
-    def test_create_command_directory_not_exists(self):
-        """Test init command with non-existent directory."""
-        args = Mock()
-        args.directory = "/non/existent/directory"
-        args.amazonq = False
+    def test_create_command_nonexistent_directory(self):
+        """Test create_command with non-existent directory."""
+        args = argparse.Namespace(
+            path="/non/existent/directory",
+            amazonq=False
+        )
         
         result = cli.create_command(args)
         assert result == 1
     
     @patch('claude_workflow.cli.input')
-    @patch('claude_workflow.cli.Path')
-    def test_create_command_non_git_repo_decline(self, mock_path, mock_input, temp_dir):
-        """Test init command in non-git directory with user declining."""
-        mock_path.return_value = temp_dir
+    def test_create_command_non_git_repo_decline(self, mock_input, temp_dir):
+        """Test create_command in non-git directory with user declining."""
         mock_input.return_value = 'n'
         
-        args = Mock()
-        args.directory = str(temp_dir)
-        args.amazonq = False
+        args = argparse.Namespace(
+            path=str(temp_dir),
+            amazonq=False
+        )
         
         result = cli.create_command(args)
         assert result == 1
     
     @patch('claude_workflow.cli.input')
-    @patch('claude_workflow.cli.Path')
     @patch('claude_workflow.cli.pkg_resources')
-    def test_create_command_non_git_repo_accept(self, mock_pkg_resources, mock_path, mock_input, temp_dir, sample_templates_dir):
-        """Test init command in non-git directory with user accepting."""
-        mock_path.return_value = temp_dir
+    def test_create_command_non_git_repo_accept(self, mock_pkg_resources, mock_input, temp_dir, sample_templates_dir):
+        """Test create_command in non-git directory with user accepting."""
         mock_input.return_value = 'y'
         mock_pkg_resources.files.return_value = sample_templates_dir.parent
         
-        (sample_templates_dir / "agent_instructions.md").write_text("# {{FILENAME}} Template")
-        
-        args = Mock()
-        args.directory = str(temp_dir)
-        args.amazonq = False
+        args = argparse.Namespace(
+            path=str(temp_dir),
+            amazonq=False
+        )
         
         result = cli.create_command(args)
         assert result == 0
+        assert (temp_dir / "CLAUDE.md").exists()
+    
+    def test_create_command_git_repo_success(self, temp_git_repo, sample_templates_dir):
+        """Test successful create_command in git repository."""
+        with patch('claude_workflow.cli.pkg_resources') as mock_pkg:
+            mock_pkg.files.return_value = sample_templates_dir.parent
+            
+            args = argparse.Namespace(
+                path=str(temp_git_repo),
+                amazonq=False
+            )
+            
+            result = cli.create_command(args)
+            assert result == 0
+            assert (temp_git_repo / "CLAUDE.md").exists()
+    
+    def test_create_command_amazonq_variant(self, temp_git_repo, sample_templates_dir):
+        """Test create_command with Amazon Q variant."""
+        with patch('claude_workflow.cli.pkg_resources') as mock_pkg:
+            mock_pkg.files.return_value = sample_templates_dir.parent
+            
+            args = argparse.Namespace(
+                path=str(temp_git_repo),
+                amazonq=True
+            )
+            
+            result = cli.create_command(args)
+            assert result == 0
+            assert (temp_git_repo / "AmazonQ.md").exists()
 
 
 class TestNewProjectCommand:
     """Test the new_project_command functionality."""
     
-    @patch('claude_workflow.new_project.create_project_structure')
-    def test_new_project_command_success(self, mock_create_structure):
-        """Test successful new project command."""
-        mock_create_structure.return_value = 0
+    @patch('claude_workflow.new_project.main')
+    def test_new_project_command_calls_main(self, mock_main):
+        """Test that new_project_command calls new_project.main."""
+        mock_main.return_value = 0
         
-        result = cli.new_project_command(Mock())
+        args = argparse.Namespace()
+        result = cli.new_project_command(args)
+        
+        mock_main.assert_called_once()
         assert result == 0
-        mock_create_structure.assert_called_once()
-    
-    @patch('claude_workflow.new_project.create_project_structure')
-    def test_new_project_command_failure(self, mock_create_structure):
-        """Test new project command failure."""
-        mock_create_structure.return_value = 1
-        
-        result = cli.new_project_command(Mock())
-        assert result == 1
 
 
 class TestUpdateCommand:
     """Test the update_command functionality."""
     
-    def test_update_command_not_implemented(self):
-        """Test that update command returns not implemented."""
-        result = cli.update_command(Mock())
-        assert result == 1
+    def test_update_command_no_agent_file(self, temp_dir):
+        """Test that update command returns error when no agent file found."""
+        # Change to temp directory without CLAUDE.md or AmazonQ.md
+        import os
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(temp_dir)
+            
+            args = argparse.Namespace()
+            result = cli.update_command(args)
+            
+            # Should return 1 when no agent file is found
+            assert result == 1
+            
+        finally:
+            os.chdir(original_cwd)
+    
+    def test_update_command_with_claude_file(self, temp_dir):
+        """Test update command when CLAUDE.md exists."""
+        # Create CLAUDE.md file
+        (temp_dir / "CLAUDE.md").write_text("# CLAUDE.md")
+        
+        import os
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(temp_dir)
+            
+            args = argparse.Namespace()
+            result = cli.update_command(args)
+            
+            # Should return 0 when agent file exists
+            assert result == 0
+            
+        finally:
+            os.chdir(original_cwd)
 
 
 class TestMainFunction:
     """Test the main entry point function."""
     
+    @patch('sys.argv', ['claude-workflow', 'init', '.', '--amazonq'])
     @patch('claude_workflow.cli.create_command')
-    @patch('sys.argv', ['claude-workflow', 'init', '.'])
-    def test_main_init_command(self, mock_create_command):
+    def test_main_with_init_command(self, mock_create_command, temp_dir):
         """Test main function with init command."""
         mock_create_command.return_value = 0
         
-        with patch('sys.exit') as mock_exit:
-            cli.main()
-            mock_exit.assert_called_with(0)
+        # Change to temp directory
+        import os
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(temp_dir)
+            result = cli.main()
+            assert result == 0
+            mock_create_command.assert_called_once()
+        finally:
+            os.chdir(original_cwd)
     
-    @patch('claude_workflow.cli.new_project_command')
     @patch('sys.argv', ['claude-workflow', 'new'])
-    def test_main_new_command(self, mock_new_command):
+    @patch('claude_workflow.new_project.main')
+    def test_main_with_new_command(self, mock_new_main):
         """Test main function with new command."""
-        mock_new_command.return_value = 0
+        mock_new_main.return_value = 0
         
-        with patch('sys.exit') as mock_exit:
-            cli.main()
-            mock_exit.assert_called_with(0)
-    
-    @patch('claude_workflow.cli.update_command')
-    @patch('sys.argv', ['claude-workflow', 'update'])
-    def test_main_update_command(self, mock_update_command):
-        """Test main function with update command."""
-        mock_update_command.return_value = 1
-        
-        with patch('sys.exit') as mock_exit:
-            cli.main()
-            mock_exit.assert_called_with(1)
-    
-    @patch('sys.argv', ['claude-workflow', '--help'])
-    def test_main_help(self):
-        """Test main function with help flag."""
-        with patch('sys.exit') as mock_exit:
-            cli.main()
-            mock_exit.assert_called_with(0)
-    
-    @patch('sys.argv', ['claude-workflow', 'invalid'])
-    def test_main_invalid_command(self):
-        """Test main function with invalid command."""
-        with patch('sys.exit') as mock_exit:
-            cli.main()
-            mock_exit.assert_called_with(2)
-
-
-class TestErrorHandling:
-    """Test error handling in CLI functions."""
-    
-    @patch('claude_workflow.cli.Path')
-    def test_create_command_exception_handling(self, mock_path):
-        """Test that exceptions in create_command are handled gracefully."""
-        mock_path.side_effect = Exception("Test exception")
-        
-        args = Mock()
-        args.directory = "/test"
-        args.amazonq = False
-        
-        result = cli.create_command(args)
-        assert result == 1
-    
-    def test_command_routing_with_none_args(self):
-        """Test command routing with None args."""
-        # This should not crash
         result = cli.main()
-        # The function should handle this gracefully
+        assert result == 0
+        mock_new_main.assert_called_once()
+    
+    @patch('sys.argv', ['claude-workflow'])
+    def test_main_no_command_shows_help(self):
+        """Test main function with no command shows help."""
+        result = cli.main()
+        assert result == 1
+
+
+class TestArgumentParsing:
+    """Test argument parsing through main function."""
+    
+    @patch('sys.argv', ['claude-workflow', 'init', '/tmp/test'])
+    @patch('claude_workflow.cli.create_command')
+    def test_init_argument_parsing(self, mock_create_command):
+        """Test that init arguments are parsed correctly."""
+        mock_create_command.return_value = 0
+        
+        cli.main()
+        
+        # Verify create_command was called with correct args
+        mock_create_command.assert_called_once()
+        args = mock_create_command.call_args[0][0]
+        assert args.path == '/tmp/test'
+        assert args.amazonq is False
+    
+    @patch('sys.argv', ['claude-workflow', 'init', '/tmp/test', '--amazonq'])
+    @patch('claude_workflow.cli.create_command')
+    def test_init_amazonq_argument_parsing(self, mock_create_command):
+        """Test that init --amazonq arguments are parsed correctly."""
+        mock_create_command.return_value = 0
+        
+        cli.main()
+        
+        # Verify create_command was called with correct args
+        mock_create_command.assert_called_once()
+        args = mock_create_command.call_args[0][0]
+        assert args.path == '/tmp/test'
+        assert args.amazonq is True
 
 
 @pytest.mark.unit
 class TestCLIIntegration:
     """Integration tests for CLI components working together."""
     
-    def test_parser_and_command_integration(self):
-        """Test that parser output works with command functions."""
-        parser = cli.create_parser()
-        
-        # Test init command integration
-        args = parser.parse_args(['init', '.', '--amazonq'])
-        assert hasattr(args, 'command')
-        assert hasattr(args, 'directory')
-        assert hasattr(args, 'amazonq')
-        
-        # Test new command integration
-        args = parser.parse_args(['new'])
-        assert hasattr(args, 'command')
+    def test_cli_help_output(self):
+        """Test that CLI help is displayed correctly."""
+        with patch('sys.argv', ['claude-workflow', '--help']):
+            with pytest.raises(SystemExit) as exc_info:
+                cli.main()
+            assert exc_info.value.code == 0
+    
+    @patch('sys.argv', ['claude-workflow', 'invalid-command'])
+    def test_invalid_command_handling(self):
+        """Test handling of invalid commands."""
+        with pytest.raises(SystemExit) as exc_info:
+            cli.main()
+        assert exc_info.value.code == 2

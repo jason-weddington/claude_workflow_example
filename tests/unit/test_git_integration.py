@@ -41,20 +41,17 @@ class TestGitRepositoryDetection:
                 result = cli.create_command(args)
                 assert result == 1  # Should fail when user declines
     
-    def test_git_detection_with_confirmation(self, temp_dir):
+    def test_git_detection_with_confirmation(self, temp_dir, sample_templates_dir):
         """Test git detection with user confirmation."""
-        with patch('claude_workflow.cli.Path') as mock_path, \
-             patch('claude_workflow.cli.pkg_resources') as mock_pkg, \
+        with patch('claude_workflow.cli.pkg_resources') as mock_pkg, \
              patch('claude_workflow.cli.input', return_value='y'):
             
-            mock_path.return_value = temp_dir
-            mock_pkg.files.return_value = temp_dir / "templates"
-            (temp_dir / "templates").mkdir()
-            (temp_dir / "templates" / "agent_instructions.md").write_text("# {{FILENAME}}")
+            mock_pkg.files.return_value = sample_templates_dir.parent
             
-            args = Mock()
-            args.directory = str(temp_dir)
-            args.amazonq = False
+            args = type('Args', (), {
+                'path': str(temp_dir),
+                'amazonq': False
+            })()
             
             result = cli.create_command(args)
             assert result == 0  # Should succeed when user confirms

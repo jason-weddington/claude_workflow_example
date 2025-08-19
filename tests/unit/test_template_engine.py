@@ -72,7 +72,7 @@ This {{FILENAME}} file provides instructions for {{AGENT_NAME}}.
         assert '{{FILENAME}' in result  # Missing closing brace
         assert '{AGENT_NAME}}' in result  # Missing opening brace
         assert '{{INVALID}}' in result  # Unknown placeholder
-        assert '{{{FILENAME}}}' in result  # Extra braces
+        # Note: {{{FILENAME}}} becomes {CLAUDE.md} because {{FILENAME}} is replaced
     
     def test_case_sensitive_placeholders(self):
         """Test that placeholder replacement is case sensitive."""
@@ -258,8 +258,10 @@ class TestEdgeCases:
         result = template_content.replace('{{FILENAME}}', 'CLAUDE.md')
         result = result.replace('{{AGENT_NAME}}', 'Claude')
         
-        # Should only replace the properly formatted placeholders
-        assert result == "{CLAUDE.md} {Claude}"
+        # Should replace the properly formatted placeholders within the braces
+        # {{{FILENAME}}} becomes {CLAUDE.md}
+        # {{{{AGENT_NAME}}}} becomes {{Claude}}
+        assert result == "{CLAUDE.md} {{Claude}}"
 
 
 @pytest.mark.unit

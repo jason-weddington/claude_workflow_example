@@ -77,8 +77,10 @@ def sample_templates_dir(temp_dir: Path, sample_template_content: str) -> Path:
     templates_dir = temp_dir / "templates"
     templates_dir.mkdir()
     
-    # Create sample template files
+    # Create sample template files that the CLI expects
     (templates_dir / "agent_instructions.md").write_text(sample_template_content)
+    
+    # Feature-specific templates
     (templates_dir / "feature.md").write_text("""# Feature Template
 
 ## Overview
@@ -117,6 +119,20 @@ Detailed description of the task.
 
 - [ ] Task 1: [Copy exact title from "Task 1" in tasks.md]
 - [ ] Task 2: [Copy exact title from "Task 2" in tasks.md]
+""")
+    
+    # General documentation templates
+    (templates_dir / "api-docs.md").write_text("# API Documentation\n\n[API documentation content]")
+    (templates_dir / "architecture.md").write_text("# Architecture\n\n[Architecture documentation]")
+    (templates_dir / "codebase.md").write_text("# Codebase\n\n[Codebase documentation]")
+    (templates_dir / "domain.md").write_text("# Domain\n\n[Domain documentation]")
+    (templates_dir / "setup.md").write_text("# Setup\n\n[Setup documentation]")
+    (templates_dir / "testing.md").write_text("# Testing\n\n[Testing documentation]")
+    
+    # Add new_project.py that CLI expects to copy
+    (templates_dir.parent / "new_project.py").write_text("""#!/usr/bin/env python
+# Test new_project.py file
+print("Test new project script")
 """)
     
     return templates_dir
