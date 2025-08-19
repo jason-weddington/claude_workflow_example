@@ -1,4 +1,4 @@
-# AmazonQ.md Project Template
+# {{FILENAME}} Project Template
 
 ## Build and Test Commands
 ```
@@ -14,7 +14,7 @@
 
 ```
 your-project/                  # Your project repository
-├── AmazonQ.md                 # Project-specific build and test commands (created by init)
+├── {{FILENAME}}               # Project-specific build and test commands (created by init)
 ├── docs/                      # General project documentation (created by init)
 │   ├── api-docs.md            # API documentation
 │   ├── architecture.md        # System architecture
@@ -40,8 +40,8 @@ your-project/                  # Your project repository
 
 Feature-specific notes are stored in the `planning` folder in a subfolder that exactly matches your git branch name. The directory structure mirrors your branch names - if your branch is called `feature/new-feature`, the docs go in `planning/feature/new-feature/`. The word "feature" is not a special directory, it's just part of common branch naming conventions.
 
-## Creating Documentation for a New Feature
-When starting work on a new feature, use this command to create the planning documentation structure for that feature branch:
+## Creating a New Project
+To bootstrap a new project with the standard planning structure:
 
 1. Create and checkout a new feature branch (e.g., `git checkout -b feature/new-feature`)
 2. Run the project bootstrap command:
@@ -50,24 +50,23 @@ When starting work on a new feature, use this command to create the planning doc
    ```
 3. The command will:
    - Create the proper directory structure based on your current branch
-   - Create template files for feature-specific documents
-4. **IMPORTANT:** Open and read the template files, particularly those in the docs/ directory. The `codebase.md` and `domain.md` in docs/ contain first-time setup instructions for AI assistants to analyze your codebase and document it properly.
-
-## Planning Workflow
-- Discuss the current feature with the user
-- Update feature.md documentation in planning/<branch-name>/feature.md
-- Collaborate with the user to define detailed development tasks with clear acceptance criteria in planning/<branch-name>/tasks.md
-- Add simple checkbox tasks in planning/<branch-name>/to-do.md that correspond to each task
+   - Copy template files for feature-specific documents (feature.md, tasks.md, to-do.md)
+4. **IMPORTANT:** Open and read the template files in the docs/ directory, particularly `codebase.md` and `domain.md`. These contain first-time setup instructions for AI assistants to analyze your codebase and document it properly.
 
 ## Development Workflow
-- Check to-do.md for the next task to implement
+- Check to-do.md for the next task to implement (simple checklist with 1:1 mapping to tasks.md)
 - Read the detailed requirements in tasks.md for that specific task
 - Implement only that single task completely, following TDD practices
 - Ensure all tests pass before considering the task complete
 - Update docs/codebase.md with any new structures, patterns, or concepts introduced
-- Mark the task as completed in to-do.md
+- Mark the task as completed in to-do.md (check the box)
 - Commit changes to git with a meaningful commit message
 - Stop and wait for feedback before moving to the next task
 
+**File Relationship**: tasks.md contains detailed task descriptions with acceptance criteria and implementation notes. to-do.md contains a simple checklist that maps 1:1 to those tasks - one checkbox per task, no detailed breakdowns.
+
 ## Code Style Guidelines
 - Add your project's code style guidelines here
+
+## Project Structure
+- Add your project's structure information here
