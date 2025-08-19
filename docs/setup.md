@@ -59,11 +59,18 @@ eval "$(_CLAUDE_WORKFLOW_COMPLETE=source_bash claude-workflow)"
 
 ### For Framework Development
 
-1. **Clone and Install**:
+1. **Clone and Set Up Virtual Environment**:
    ```bash
    git clone <repo-url>
    cd claude_workflow_example
-   pip install -e . --user
+   
+   # Create and activate virtual environment
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   
+   # Upgrade pip and install in editable mode with dev dependencies
+   pip install --upgrade pip
+   pip install -e ".[dev]"
    ```
 
 2. **Verify Development Installation**:
@@ -72,9 +79,27 @@ eval "$(_CLAUDE_WORKFLOW_COMPLETE=source_bash claude-workflow)"
    claude-workflow --help
    claude-workflow init --help
    claude-workflow new --help
+   
+   # Run tests
+   pytest
+   pytest -v  # Verbose output
+   pytest -m unit  # Run only unit tests
+   pytest -m integration  # Run only integration tests
    ```
 
-3. **Test in Temporary Environment**:
+3. **For Ongoing Development**:
+   ```bash
+   # Always activate the virtual environment before working
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   
+   # Your prompt should show (.venv) when activated
+   # Run tests, CLI commands, etc.
+   
+   # Deactivate when done
+   deactivate
+   ```
+
+4. **Test Framework Development**:
    ```bash
    # Create test project
    mkdir /tmp/test_project && cd /tmp/test_project
