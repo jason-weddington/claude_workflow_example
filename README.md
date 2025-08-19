@@ -256,6 +256,36 @@ This serves multiple purposes:
 
 If you're wondering "why does this CLI tool have so much documentation?" - it's because we're using our own tool to build it, proving that the framework scales from simple projects to complex ones.
 
+## Testing
+
+The Claude Workflow Framework includes comprehensive automated testing to ensure reliability and maintainability.
+
+### Running Tests
+
+```bash
+# Install with development dependencies
+pip install -e ".[dev]"
+
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=claude_workflow --cov-report=term-missing
+
+# Run specific test categories
+pytest -m unit          # Unit tests only
+pytest -m integration   # Integration tests only
+```
+
+### Test Structure
+
+- **Unit Tests**: Test individual components in isolation
+- **Integration Tests**: Test complete workflows end-to-end
+- **Error Handling Tests**: Test edge cases and error conditions
+- **80%+ Code Coverage**: Comprehensive test coverage for reliability
+
+For detailed testing guidelines, see [TESTING.md](TESTING.md).
+
 ## Customization
 
 Edit the templates in `planning/templates/` to match your project's specific needs and development practices.

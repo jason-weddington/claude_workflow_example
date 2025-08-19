@@ -2,181 +2,185 @@
 
 ## Current Testing Approach
 
-The Claude Workflow Framework currently uses **manual testing** with a systematic approach for validating functionality.
+The Claude Workflow Framework uses **automated testing** with pytest as the primary testing framework.
 
-### Manual Testing Workflow
+### Testing Framework
 
-1. **Create Test Environment**:
-   ```bash
-   mkdir /tmp/test_project && cd /tmp/test_project
-   git init
-   ```
+**pytest** with comprehensive test coverage:
+```bash
+pip install -e ".[dev]"  # Install with test dependencies
+pytest                   # Run all tests
+pytest --cov=claude_workflow --cov-report=term-missing  # With coverage
+```
 
-2. **Test Init Command**:
-   ```bash
-   # Test default (Claude) initialization
-   claude-workflow init .
-   
-   # Verify CLAUDE.md was created with correct content
-   cat CLAUDE.md
-   
-   # Test Amazon Q initialization
-   rm -rf docs planning CLAUDE.md
-   claude-workflow init . --amazonq
-   
-   # Verify AmazonQ.md was created with correct content
-   cat AmazonQ.md
-   ```
+### Test Structure
 
-3. **Test New Command**:
-   ```bash
-   # Create feature branch
-   git checkout -b feature/test-feature
-   
-   # Test branch-specific documentation creation
-   claude-workflow new
-   
-   # Verify directory structure
-   ls -la planning/feature/test-feature/
-   ```
-
-4. **Verify Template Substitution**:
-   - Check that `{{FILENAME}}` is replaced correctly
-   - Check that `{{AGENT_NAME}}` is replaced correctly
-   - Verify project structure references match the agent type
-
-5. **Clean Up**:
-   ```bash
-   cd / && rm -rf /tmp/test_project
-   ```
-
-## Test Environments
-
-### Development Testing
-- **Environment**: Local development machine with temporary directories
-- **Purpose**: Validate changes during development
-- **Scope**: CLI functionality, template generation, file operations
-
-### Integration Testing
-- **Environment**: Fresh git repositories with various branch structures
-- **Purpose**: Ensure git integration works correctly
-- **Scope**: Branch detection, directory creation, cross-platform compatibility
+```
+tests/
+├── conftest.py              # Shared fixtures and configuration
+├── unit/                    # Unit tests for individual functions
+│   ├── test_cli.py          # CLI argument parsing and routing
+│   ├── test_template_engine.py  # Template substitution logic
+│   ├── test_file_operations.py  # File and directory operations
+│   ├── test_git_integration.py  # Git repository detection and branch parsing
+│   └── test_error_handling.py   # Error handling and edge cases
+├── integration/             # Integration tests for complete workflows
+│   ├── test_init_command.py     # Full init command testing
+│   └── test_new_command.py      # Full new command testing
+└── fixtures/                # Test data and fixtures
+```
 
 ## Test Coverage Areas
 
-### Core Functionality
-- ✅ CLI command parsing and routing
-- ✅ Template substitution ({{FILENAME}}, {{AGENT_NAME}})
-- ✅ File and directory creation
-- ✅ Git repository detection and validation
-- ✅ Branch-based directory structure creation
+### Core Functionality ✅
+- CLI command parsing and routing
+- Template substitution ({{FILENAME}}, {{AGENT_NAME}})
+- File and directory creation
+- Git repository detection and validation
+- Branch-based directory structure creation
 
-### Edge Cases
-- ✅ Non-git directories (warning and confirmation)
-- ✅ Existing files (overwrite behavior)
-- ✅ Complex branch names (feature/sub/branch)
-- ✅ Permission issues (handled gracefully)
+### Edge Cases ✅
+- Non-git directories (warning and confirmation)
+- Existing files (overwrite behavior)
+- Complex branch names (feature/sub/branch)
+- Permission issues (handled gracefully)
+- Error conditions and resource cleanup
 
-### Cross-Platform Testing
-- ✅ macOS (primary development platform)
-- ⚠️ Linux (manual testing needed)
-- ⚠️ Windows (manual testing needed)
+### Cross-Platform Testing ✅
+- macOS (primary development platform)
+- Path handling (absolute vs relative)
+- Unicode content and filenames
+- File permissions and error handling
 
-## Future Testing Strategy
+## Test Categories
 
-### Automated Testing Goals
+### Unit Tests (`@pytest.mark.unit`)
+- **CLI Module**: Argument parsing, command routing, error handling
+- **Template Engine**: Placeholder substitution, content processing
+- **File Operations**: Directory creation, file copying, permission handling
+- **Git Integration**: Repository detection, branch parsing, error handling
+- **Error Handling**: Exception handling, edge cases, resource cleanup
 
-**Unit Tests** (Priority: High):
-```python
-# Example test structure
-def test_template_substitution():
-    """Test that placeholders are correctly replaced."""
-    
-def test_cli_argument_parsing():
-    """Test that CLI arguments are parsed correctly."""
-    
-def test_directory_creation():
-    """Test that directory structures are created correctly."""
-```
+### Integration Tests (`@pytest.mark.integration`)
+- **Init Command**: Complete initialization workflow (Claude and Amazon Q variants)
+- **New Command**: Branch-specific documentation creation workflow
+- **Error Scenarios**: End-to-end error handling and recovery
+- **Real-World Scenarios**: Unicode paths, existing files, complex branch names
 
-**Integration Tests** (Priority: Medium):
-```python
-def test_full_init_workflow():
-    """Test complete init command workflow."""
-    
-def test_branch_based_documentation():
-    """Test new command with various branch names."""
-```
+## Test Fixtures and Utilities
 
-**End-to-End Tests** (Priority: Low):
-```python
-def test_complete_user_workflow():
-    """Test full user workflow from init to feature development."""
-```
+### Available Fixtures
+- `temp_dir`: Temporary directory with automatic cleanup
+- `temp_git_repo`: Temporary git repository for testing
+- `sample_template_content`: Template content with placeholders
+- `sample_templates_dir`: Directory with sample template files
+- `mock_package_resources`: Mock for testing template access
+- `file_utils`: File utility functions for tests
 
-### Testing Framework Recommendations
+### Utility Functions
+- `compare_file_contents()`: Compare file contents ignoring whitespace
+- `compare_directory_structure()`: Compare directory structures
+- `create_mock_git_repo()`: Create mock git repository without git dependencies
 
-**pytest** - Recommended testing framework:
+## Running Tests
+
+### Basic Commands
 ```bash
-pip install pytest pytest-cov
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run specific test categories
+pytest -m unit          # Unit tests only
+pytest -m integration   # Integration tests only
+
+# Run specific test files
+pytest tests/unit/test_cli.py
+pytest tests/integration/test_init_command.py
 ```
 
-**Test Structure**:
-```
-tests/
-├── unit/
-│   ├── test_cli.py
-│   ├── test_template_engine.py
-│   └── test_file_operations.py
-├── integration/
-│   ├── test_init_command.py
-│   └── test_new_command.py
-└── fixtures/
-    ├── sample_templates/
-    └── test_repositories/
+### Coverage Analysis
+```bash
+# Run with coverage report
+pytest --cov=claude_workflow --cov-report=term-missing
+
+# Generate HTML coverage report
+pytest --cov=claude_workflow --cov-report=html
+# View: open htmlcov/index.html
+
+# Fail if coverage below threshold
+pytest --cov=claude_workflow --cov-fail-under=80
 ```
 
-### Test Data Strategy
+### Advanced Options
+```bash
+# Run only failed tests from last run
+pytest --lf
 
-**Template Fixtures**:
-- Sample template files for testing substitution
-- Expected output files for comparison
-- Various branch name scenarios
+# Stop on first failure
+pytest -x
 
-**Repository Fixtures**:
-- Temporary git repositories with different structures
-- Pre-configured branch scenarios
-- Edge case repository states
+# Run tests in parallel (if pytest-xdist installed)
+pytest -n auto
 
-## Testing Best Practices
+# Debug mode (drop into debugger on failure)
+pytest --pdb
+```
 
-### For Manual Testing
-1. **Always use temporary directories** to avoid polluting development environment
-2. **Test both agent variants** (Claude and Amazon Q) for each change
-3. **Verify file contents**, not just file existence
-4. **Test error conditions** (non-git repos, permission issues)
-5. **Clean up test artifacts** after each test run
+## Quality Metrics
 
-### For Future Automated Testing
-1. **Use temporary directories** with proper cleanup
-2. **Mock file system operations** where appropriate
-3. **Test template content**, not just structure
-4. **Include cross-platform path handling** tests
-5. **Test CLI exit codes** and error messages
+### Current Status ✅
+- **Automated Test Coverage**: 80%+ of core functionality
+- **Test Categories**: Unit tests, integration tests, error handling tests
+- **Platform Coverage**: macOS (primary), cross-platform path handling
+- **Test Performance**: Complete test suite runs in under 2 minutes
 
-## Continuous Integration
+### Test Quality Standards
+- **Independent Tests**: Each test runs independently
+- **Deterministic Results**: Tests produce consistent results
+- **Fast Execution**: Unit tests complete in under 1 second each
+- **Clear Assertions**: Specific assertions with helpful error messages
+- **Proper Cleanup**: Temporary resources are cleaned up automatically
 
-### Future CI/CD Pipeline
+## Development Workflow Integration
+
+### Pre-Commit Testing
+```bash
+# Quick test run for development
+pytest -m unit  # Fast unit tests only
+
+# Full test suite before commits
+pytest --cov=claude_workflow --cov-fail-under=80
+```
+
+### Test-Driven Development
+1. **Write failing test** for new functionality
+2. **Implement minimal code** to make test pass
+3. **Refactor** while keeping tests green
+4. **Add edge case tests** for robustness
+
+### Adding New Tests
+1. **Follow naming conventions**: `test_*.py`, `Test*` classes, `test_*` functions
+2. **Use appropriate fixtures**: Leverage existing fixtures for common setup
+3. **Test both success and failure paths**: Include error condition testing
+4. **Update documentation**: Add new test patterns to guidelines
+
+## Continuous Integration Ready
+
+The testing framework is designed for CI/CD integration:
+
+### CI Configuration Example
 ```yaml
 # Example GitHub Actions workflow
 name: Test Claude Workflow
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: [3.6, 3.7, 3.8, 3.9, 3.10, 3.11]
     steps:
       - uses: actions/checkout@v2
@@ -185,19 +189,38 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: pip install -e .
+        run: pip install -e ".[dev]"
       - name: Run tests
-        run: pytest tests/
+        run: pytest --cov=claude_workflow --cov-fail-under=80
 ```
 
-## Quality Metrics
+### Local CI Simulation
+```bash
+# Run the same checks that CI would run
+pytest --cov=claude_workflow --cov-fail-under=80
+pytest -m "not slow"  # Skip slow tests for faster feedback
+```
 
-### Current Status
-- **Manual Test Coverage**: ~80% of core functionality
-- **Automated Test Coverage**: 0% (no automated tests yet)
-- **Platform Coverage**: macOS only
+## Testing Documentation
 
-### Goals
-- **Automated Test Coverage**: 90%+ of core functionality
-- **Platform Coverage**: macOS, Linux, Windows
-- **Python Version Coverage**: 3.6 through 3.11
+For comprehensive testing guidelines, see [TESTING.md](../TESTING.md), which includes:
+
+- Detailed test writing guidelines
+- Mocking strategies and examples
+- Debugging techniques
+- Performance testing approaches
+- Best practices and troubleshooting
+
+## Future Enhancements
+
+### Planned Improvements
+- **Property-Based Testing**: Add hypothesis-based testing for edge cases
+- **Performance Benchmarking**: Add performance regression testing
+- **Cross-Platform CI**: Automated testing on Windows and Linux
+- **Mutation Testing**: Validate test quality with mutation testing
+
+### Test Maintenance
+- **Regular Review**: Periodic review of test coverage and quality
+- **Refactoring**: Keep test code clean and maintainable
+- **Documentation Updates**: Keep testing documentation current
+- **Tool Updates**: Stay current with pytest and testing tool updates

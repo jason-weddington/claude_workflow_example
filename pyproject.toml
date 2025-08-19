@@ -46,7 +46,7 @@ addopts = [
     "--cov=claude_workflow",
     "--cov-report=term-missing",
     "--cov-report=html",
-    "--cov-fail-under=0",  # Will increase as we add tests
+    "--cov-fail-under=65",  # Current coverage level
 ]
 markers = [
     "unit: Unit tests",
