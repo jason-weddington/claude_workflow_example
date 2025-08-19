@@ -38,25 +38,32 @@ def create_command(args):
     docs_dir = target_dir / "docs"
     docs_dir.mkdir(exist_ok=True)
     
-    # Determine which template and filename to use
+    # Determine which agent and filename to use
     if use_amazonq:
-        template_name = 'AmazonQ.md'
+        agent_name = 'Amazon Q'
         output_filename = 'AmazonQ.md'
     else:
-        template_name = 'CLAUDE.md'
+        agent_name = 'Claude'
         output_filename = 'CLAUDE.md'
     
-    # Copy the appropriate .md file to target directory, removing the H1 header
-    md_src = pkg_resources.files('claude_workflow') / 'templates' / template_name
-    with md_src.open('r') as src_file:
-        lines = src_file.readlines()
-        # Skip the first line (H1 header) and any blank lines that immediately follow
-        start_index = 1
-        while start_index < len(lines) and lines[start_index].strip() == '':
-            start_index += 1
-        
+    # Read the unified template and substitute placeholders
+    template_src = pkg_resources.files('claude_workflow') / 'templates' / 'agent_instructions.md'
+    with template_src.open('r') as src_file:
+        template_content = src_file.read()
+    
+    # Replace placeholders with actual values
+    content = template_content.replace('{{FILENAME}}', output_filename)
+    content = content.replace('{{AGENT_NAME}}', agent_name)
+    
+    # Skip the first line (H1 header) and any blank lines that immediately follow
+    lines = content.split('\n')
+    start_index = 1
+    while start_index < len(lines) and lines[start_index].strip() == '':
+        start_index += 1
+    
+    # Write the processed content to the target file
     with open(target_dir / output_filename, 'w') as dst_file:
-        dst_file.writelines(lines[start_index:])
+        dst_file.write('\n'.join(lines[start_index:]))
     
     # Copy new_project.py
     project_script_src = Path(__file__).parent / "new_project.py"
@@ -81,16 +88,10 @@ def create_command(args):
     print(f"Claude Workflow initialized in {target_dir}")
     print("")
     print("Next steps:")
-    if use_amazonq:
-        print(f"1. Edit {target_dir}/AmazonQ.md with your specific project details")
-        print("2. Create a feature branch: git checkout -b feature/your-feature")
-        print("3. Run claude-workflow new to create documentation for the new feature")
-        print("4. Tell Amazon Q to read the planning documents to understand your project")
-    else:
-        print(f"1. Edit {target_dir}/CLAUDE.md with your specific project details")
-        print("2. Create a feature branch: git checkout -b feature/your-feature")
-        print("3. Run claude-workflow new to create documentation for the new feature")
-        print("4. Tell Claude to read the planning documents to understand your project")
+    print(f"1. Edit {target_dir}/{output_filename} with your specific project details")
+    print("2. Create a feature branch: git checkout -b feature/your-feature")
+    print("3. Run claude-workflow new to create documentation for the new feature")
+    print(f"4. Tell {agent_name} to read the planning documents to understand your project")
     print("")
     print("For more information, see the documentation.")
     
