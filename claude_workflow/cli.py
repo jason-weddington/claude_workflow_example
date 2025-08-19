@@ -78,12 +78,34 @@ def create_command(args):
     # Copy feature-specific templates to planning/templates
     for file in feature_templates:
         src_file = pkg_resources.files('claude_workflow') / 'templates' / file
-        shutil.copy(src_file, planning_dir / file)
+        dest_file = planning_dir / file
+        if not dest_file.exists():
+            shutil.copy(src_file, dest_file)
+            print(f"Created {file} in planning/templates/")
+        else:
+            print(f"Skipped {file} in planning/templates/ (already exists)")
     
-    # Copy general templates to docs/
+    # Copy general templates to docs/ (only if they don't exist)
+    added_docs = []
+    skipped_docs = []
     for file in general_templates:
         src_file = pkg_resources.files('claude_workflow') / 'templates' / file
-        shutil.copy(src_file, docs_dir / file)
+        dest_file = docs_dir / file
+        if not dest_file.exists():
+            shutil.copy(src_file, dest_file)
+            added_docs.append(file)
+        else:
+            skipped_docs.append(file)
+    
+    # Provide feedback about docs directory
+    if skipped_docs:
+        print(f"Found existing docs/ directory - preserved {len(skipped_docs)} existing file(s)")
+    
+    if added_docs:
+        print(f"Added {len(added_docs)} template file(s) to docs/: {', '.join(added_docs)}")
+    
+    if skipped_docs:
+        print(f"Preserved {len(skipped_docs)} existing file(s) in docs/: {', '.join(skipped_docs)}")
     
     print(f"Claude Workflow initialized in {target_dir}")
     print("")

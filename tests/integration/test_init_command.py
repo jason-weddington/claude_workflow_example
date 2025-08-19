@@ -265,3 +265,101 @@ class TestInitCommandRealWorldScenarios:
             # Should handle unicode paths correctly
             assert result == 0
             assert (unicode_dir / "CLAUDE.md").exists()
+    
+    def test_init_command_preserves_existing_docs_directory(self, temp_git_repo, sample_templates_dir):
+        """Test that init command preserves existing docs directory and files."""
+        target_dir = temp_git_repo
+        
+        # Create existing docs directory with some files
+        docs_dir = target_dir / "docs"
+        docs_dir.mkdir()
+        (docs_dir / "existing-file.md").write_text("# My Existing Documentation")
+        (docs_dir / "api-docs.md").write_text("# My Custom API Documentation")
+        
+        with patch('claude_workflow.cli.pkg_resources') as mock_pkg:
+            mock_pkg.files.return_value = sample_templates_dir.parent
+            
+            args = type('Args', (), {
+                'path': str(target_dir),
+                'amazonq': False
+            })()
+            
+            result = cli.create_command(args)
+            
+            # Should succeed
+            assert result == 0
+            
+            # Verify existing files are preserved
+            assert (docs_dir / "existing-file.md").exists()
+            assert (docs_dir / "existing-file.md").read_text() == "# My Existing Documentation"
+            assert (docs_dir / "api-docs.md").read_text() == "# My Custom API Documentation"
+            
+            # Verify new template files were added (non-conflicting ones)
+            assert (docs_dir / "architecture.md").exists()
+            assert (docs_dir / "codebase.md").exists()
+            assert (docs_dir / "domain.md").exists()
+            assert (docs_dir / "testing.md").exists()
+            assert (docs_dir / "setup.md").exists()
+            
+            # Verify template content in new files
+            assert "Architecture" in (docs_dir / "architecture.md").read_text()
+    
+    def test_init_command_with_empty_existing_docs_directory(self, temp_git_repo, sample_templates_dir):
+        """Test init command with existing but empty docs directory."""
+        target_dir = temp_git_repo
+        
+        # Create empty docs directory
+        docs_dir = target_dir / "docs"
+        docs_dir.mkdir()
+        
+        with patch('claude_workflow.cli.pkg_resources') as mock_pkg:
+            mock_pkg.files.return_value = sample_templates_dir.parent
+            
+            args = type('Args', (), {
+                'path': str(target_dir),
+                'amazonq': False
+            })()
+            
+            result = cli.create_command(args)
+            
+            # Should succeed
+            assert result == 0
+            
+            # Verify all template files were added
+            expected_files = ["api-docs.md", "architecture.md", "codebase.md", 
+                            "domain.md", "setup.md", "testing.md"]
+            for file in expected_files:
+                assert (docs_dir / file).exists()
+                # Verify it's template content, not empty
+                assert len((docs_dir / file).read_text()) > 10
+    
+    def test_init_command_all_docs_files_exist(self, temp_git_repo, sample_templates_dir):
+        """Test init command when all template files already exist in docs."""
+        target_dir = temp_git_repo
+        
+        # Create docs directory with all template files
+        docs_dir = target_dir / "docs"
+        docs_dir.mkdir()
+        
+        template_files = ["api-docs.md", "architecture.md", "codebase.md", 
+                         "domain.md", "setup.md", "testing.md"]
+        for file in template_files:
+            (docs_dir / file).write_text(f"# My Custom {file}")
+        
+        with patch('claude_workflow.cli.pkg_resources') as mock_pkg:
+            mock_pkg.files.return_value = sample_templates_dir.parent
+            
+            args = type('Args', (), {
+                'path': str(target_dir),
+                'amazonq': False
+            })()
+            
+            result = cli.create_command(args)
+            
+            # Should succeed
+            assert result == 0
+            
+            # Verify all existing files are preserved
+            for file in template_files:
+                assert (docs_dir / file).exists()
+                assert (docs_dir / file).read_text() == f"# My Custom {file}"

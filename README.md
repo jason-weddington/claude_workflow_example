@@ -72,9 +72,11 @@ claude-workflow init .
 claude-workflow init . --amazonq
 ```
 
+**Note**: If your project already has a `docs/` directory, the framework will preserve all existing files and only add new template files that don't already exist. This ensures your existing documentation is never overwritten.
+
 This creates:
 - `CLAUDE.md` (or `AmazonQ.md` with --amazonq flag) file in your project root
-- `docs/` directory with general project documentation
+- `docs/` directory with general project documentation (preserves existing files)
 - `planning/templates/` directory with feature-specific templates
 
 ### Step 3: Create Documentation for Your Branch
